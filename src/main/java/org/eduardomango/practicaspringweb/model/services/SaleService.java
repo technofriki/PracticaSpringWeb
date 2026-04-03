@@ -33,13 +33,27 @@ private final UserService userService;
                 .orElseThrow(()-> new SaleNotFoundException("Sale not found with id:"+id));
     }
 
-public SaleEntity registerSale (Long id_product, UserEntity id_client, Long quantity){
-       ProductEntity
+public SaleEntity registerSale (Long id_product, Long id_client, Long quantity){
+       ProductEntity product = productService.findById(id_product);
+       UserEntity user = userService.findById(id_client);
 
-        SaleEntity newSale = new SaleEntity();
-       newSale.setId(id_product);
-       newSale.setQuantity(quantity);
-       newSale.setClient(id_client);
-       newSale.setSaleDate(LocalDate.now());
+       SaleEntity sale = new SaleEntity();
+       sale.setProducts(product);
+       sale.setQuantity(quantity);
+       sale.setClient(user);
+       sale.setSaleDate(LocalDate.now());
+       saleRepository.save(sale);
+       return sale;
 }
+public void delete (Long id){
+        SaleEntity sale = findById(id);
+        saleRepository.delete(sale);
+    }
+
+    public void update (SaleEntity sale, Long id){
+        findById(id);
+        saleRepository.update(sale);
+    }
+
+
 }
