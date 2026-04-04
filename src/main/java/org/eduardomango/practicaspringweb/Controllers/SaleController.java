@@ -3,6 +3,8 @@ package org.eduardomango.practicaspringweb.Controllers;
 import org.eduardomango.practicaspringweb.model.entities.SaleEntity;
 import org.eduardomango.practicaspringweb.model.services.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,25 +17,45 @@ public class SaleController {
     private SaleService saleService;
 
     @GetMapping
-    public List<SaleEntity> getAllSales(){return saleService.findAll();}
+    public ResponseEntity<List<SaleEntity>> getAllSales(){
+        List<SaleEntity> sales = saleService.findAll();
+    return ResponseEntity.ok(sales);
+    }
 
     @GetMapping ("/{id}")
-    public SaleEntity getSaleById (@PathVariable Long id){
-        return saleService.findById(id);
+    public ResponseEntity<SaleEntity> getSaleById (@PathVariable Long id){
+        try {
+            SaleEntity sale = saleService.findById(id);
+            return ResponseEntity.ok(sale);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PostMapping
-    public SaleEntity registerSale (@RequestParam Long id_product, @RequestParam Long id_client, @RequestParam Long quantity){
-        return saleService.registerSale(id_product, id_client, quantity);
+    public ResponseEntity<SaleEntity> registerSale (@RequestParam Long id_product, @RequestParam Long id_client, @RequestParam Long quantity){
+        saleService.registerSale(id_product, id_client, quantity);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{id}")
-    public void updateSale(@PathVariable Long id, @RequestBody SaleEntity sale){
-        saleService.update(sale, id);
+    public ResponseEntity<SaleEntity> updateSale(@PathVariable Long id, @RequestBody SaleEntity sale){
+        try{
+
+            saleService.update(sale, id);
+            return ResponseEntity.ok(sale);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSale (@PathVariable Long id){
-        saleService.delete(id);
+    public ResponseEntity<Void> deleteSale (@PathVariable Long id){
+        try{
+            saleService.delete(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
