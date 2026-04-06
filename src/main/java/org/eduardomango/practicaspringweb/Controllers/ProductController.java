@@ -1,6 +1,7 @@
 package org.eduardomango.practicaspringweb.Controllers;
 
 import org.eduardomango.practicaspringweb.model.entities.ProductEntity;
+import org.eduardomango.practicaspringweb.model.exceptions.ProductNotFoundException;
 import org.eduardomango.practicaspringweb.model.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,12 +25,10 @@ public class ProductController {
 
 @GetMapping("/{id}")
     public ResponseEntity<ProductEntity> getProductById (@PathVariable Long id){
-        try{
+
             ProductEntity product = productService.findById(id);
             return ResponseEntity.ok(product);
-        } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+
 }
 
 @PostMapping
@@ -40,25 +39,26 @@ public ResponseEntity<ProductEntity> createProduct (@RequestBody ProductEntity p
 
 @PutMapping("/{id}")
     public ResponseEntity<ProductEntity> updateProduct (@PathVariable Long id, @RequestBody ProductEntity product){
-        try{
+
             product.setId(id);
             productService.save(product);
             return ResponseEntity.ok(product);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+
 }
 
 @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct (@PathVariable Long id){
-        try{
+
             ProductEntity product = productService.findById(id);
             productService.delete(product);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
 
-}
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handlerProductNotFound(ProductNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
 
 }

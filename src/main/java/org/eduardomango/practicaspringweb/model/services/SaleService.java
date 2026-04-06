@@ -38,6 +38,7 @@ public SaleEntity registerSale (Long id_product, Long id_client, Long quantity){
        UserEntity user = userService.findById(id_client);
 
        SaleEntity sale = new SaleEntity();
+       sale.setId(System.currentTimeMillis());
        sale.setProducts(product);
        sale.setQuantity(quantity);
        sale.setClient(user);
@@ -50,8 +51,9 @@ public void delete (Long id){
         saleRepository.delete(sale);
     }
 
-    public void update (SaleEntity sale, Long id){
+    public void update (Long id, SaleEntity sale){
         findById(id);
+        sale.setId(id);
         saleRepository.update(sale);
     }
 

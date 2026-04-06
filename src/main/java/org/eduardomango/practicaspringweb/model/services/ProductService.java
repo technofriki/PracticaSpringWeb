@@ -52,7 +52,9 @@ public class ProductService {
         productRepository.delete(p);
     }
 
-    public void update(ProductEntity p) {
-        productRepository.update(p);
+    public void update(Long id, ProductEntity product) {
+        findById(id);
+        product.setId(id);
+        productRepository.update(product);
     }
 }

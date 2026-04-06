@@ -52,7 +52,9 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public void update(UserEntity user) {
+    public void update(Long id, UserEntity user) {
+        findById(id);
+        user.setId(id);
         userRepository.update(user);
     }
 }
