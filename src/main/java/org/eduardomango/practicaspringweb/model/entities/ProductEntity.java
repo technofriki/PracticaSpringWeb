@@ -1,7 +1,6 @@
 package org.eduardomango.practicaspringweb.model.entities;
 
 import lombok.*;
-
 @Getter
 @Setter
 @NoArgsConstructor

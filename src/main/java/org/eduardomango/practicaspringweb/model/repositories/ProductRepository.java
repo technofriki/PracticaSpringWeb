@@ -41,6 +41,13 @@ public class ProductRepository implements IRepository<ProductEntity> {
     }
 
     public void save(ProductEntity product) {
+        if (product.getId() == 0) {
+            long newId = products.stream()
+                    .mapToLong(ProductEntity::getId)
+                    .max()
+                    .orElse(0) + 1;
+            product.setId(newId);
+        }
         products.add(product);
     }
 
@@ -49,7 +56,10 @@ public class ProductRepository implements IRepository<ProductEntity> {
     }
 
     public void update(ProductEntity product) {
-        int index = products.indexOf(product);
-        products.set(index, product);
+        for (int i = 0; i<products.size(); i++) {
+            if (products.get(i).getId() == product.getId()) {
+                products.set(i, products.get(i));
+            }
+        }
     }
 }

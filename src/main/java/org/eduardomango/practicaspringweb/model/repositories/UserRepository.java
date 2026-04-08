@@ -1,5 +1,6 @@
 package org.eduardomango.practicaspringweb.model.repositories;
 
+import org.eduardomango.practicaspringweb.model.entities.ProductEntity;
 import org.eduardomango.practicaspringweb.model.entities.UserEntity;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +42,13 @@ public class UserRepository implements IRepository<UserEntity> {
     }
 
     public void save(UserEntity user) {
+        if (user.getId() == 0) {
+            long newId = users.stream()
+                    .mapToLong(UserEntity::getId)
+                    .max()
+                    .orElse(0) + 1;
+            user.setId(newId);
+        }
         users.add(user);
     }
 
