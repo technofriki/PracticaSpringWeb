@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping
     public ResponseEntity<List<ProductEntity>> getAllProducts(){
@@ -55,10 +59,6 @@ public ResponseEntity<ProductEntity> createProduct (@RequestBody ProductEntity p
 
     }
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handlerProductNotFound(ProductNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
+
 
 }

@@ -14,8 +14,11 @@ import java.util.List;
 @RequestMapping("/api/sales")
 public class  SaleController {
 
-    @Autowired
-    private SaleService saleService;
+    private final SaleService saleService;
+
+    public SaleController(SaleService saleService) {
+        this.saleService = saleService;
+    }
 
     @GetMapping
     public ResponseEntity<List<SaleEntity>> getAllSales(){
@@ -49,9 +52,4 @@ public class  SaleController {
         return ResponseEntity.noContent().build();
     }
 
-    @ExceptionHandler(SaleNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> hanlderSaleNotFound (SaleNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
 }
