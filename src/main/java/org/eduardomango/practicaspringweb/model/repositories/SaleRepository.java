@@ -47,7 +47,11 @@ public class SaleRepository implements IRepository<SaleEntity> {
     }
 
     public void update(SaleEntity sale) {
-        int index = sales.indexOf(sale);
-        sales.set(index, sale);
+        for (int i = 0; i<sales.size(); i++){
+            if (sales.get(i).getId() == sale.getId()){
+                sales.set(i, sale);
+                break;
+            }
+        }
     }
 }

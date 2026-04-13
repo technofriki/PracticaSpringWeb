@@ -58,8 +58,10 @@ public class ProductRepository implements IRepository<ProductEntity> {
     public void update(ProductEntity product) {
         for (int i = 0; i<products.size(); i++) {
             if (products.get(i).getId() == product.getId()) {
-                products.set(i, products.get(i));
+                products.set(i, product);
+                break;
             }
+
         }
     }
 }

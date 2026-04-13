@@ -57,7 +57,11 @@ public class UserRepository implements IRepository<UserEntity> {
     }
 
     public void update(UserEntity user) {
-        int index = users.indexOf(user);
-        users.set(index, user);
+        for (int i = 0; i<users.size(); i++){
+            if (users.get(i).getId() == user.getId()){
+                users.set(i, user);
+                break;
+            }
+        }
     }
 }
