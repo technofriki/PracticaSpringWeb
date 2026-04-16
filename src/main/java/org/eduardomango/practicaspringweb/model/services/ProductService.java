@@ -1,5 +1,9 @@
 package org.eduardomango.practicaspringweb.model.services;
 
+import org.eduardomango.practicaspringweb.DTO.ProductRequest;
+import org.eduardomango.practicaspringweb.DTO.ProductResponse;
+import org.eduardomango.practicaspringweb.Mapper.ProductRequestMapper;
+import org.eduardomango.practicaspringweb.Mapper.ProductResponseMapper;
 import org.eduardomango.practicaspringweb.model.entities.ProductEntity;
 import org.eduardomango.practicaspringweb.model.exceptions.ProductNotFoundException;
 import org.eduardomango.practicaspringweb.model.exceptions.UserNotFoundException;
@@ -8,52 +12,71 @@ import org.eduardomango.practicaspringweb.model.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
     private final IRepository<ProductEntity> productRepository;
+    private final ProductResponseMapper productResponseMapper;
+    private final ProductRequestMapper productRequestMapper;
 
-    public ProductService(IRepository<ProductEntity> productRepository) {
+    public ProductService(IRepository<ProductEntity> productRepository, ProductResponseMapper productResponseMapper, ProductRequestMapper productRequestMapper) {
         this.productRepository = productRepository;
+        this.productResponseMapper = productResponseMapper;
+        this.productRequestMapper = productRequestMapper;
     }
 
-    public List<ProductEntity> findAll() {
-        return productRepository.findAll();
+    public List<ProductResponse> findAll() {
+
+        return productRepository.findAll().stream()
+                .map(productResponseMapper::convertToDto)
+                .collect(Collectors.toList());
     }
-    public ProductEntity findById(long id) {
-        return productRepository.findAll()
+    public ProductResponse findById(long id) {
+        ProductEntity product = productRepository.findAll()
                 .stream()
                 .filter(p -> p.getId() == id)
                 .findFirst()
                 .orElseThrow(ProductNotFoundException::new);
+        return productResponseMapper.convertToDto(product);
     }
 
-    public ProductEntity findByName(String name){
-        return productRepository.findAll()
+    public ProductResponse findByName(String name){
+        ProductEntity product = productRepository.findAll()
                 .stream()
                 .filter(user -> user.getName().equalsIgnoreCase(name))
                 .findFirst()
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(ProductNotFoundException::new);
+        return productResponseMapper.convertToDto(product);
     }
 
-    public List<ProductEntity> findMoreExpensiveThan(Double price){
+    public List<ProductResponse> findMoreExpensiveThan(Double price){
         return productRepository.findAll()
                 .stream()
-                .filter(user -> user.getPrice() > price)
-                .toList();
+                .filter(p -> p.getPrice() > price)
+                .map(productResponseMapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public void save(ProductEntity p) {
-        productRepository.save(p);
+    public void save(ProductRequest p) {
+
+        ProductEntity product = productRequestMapper.convertToEntity(p);
+        productRepository.save(product);
     }
 
-    public void delete(ProductEntity p) {
-        productRepository.delete(p);
+    public void delete(Long id) {
+        ProductEntity product = productRepository.findAll()
+                .stream()
+                .filter(p-> p.getId()==id)
+                .findFirst()
+                .orElseThrow(ProductNotFoundException::new);
+        productRepository.delete(product);
     }
 
-    public void update(Long id, ProductEntity product) {
+    public void update(Long id, ProductRequest p) {
         findById(id);
+        ProductEntity product = productRequestMapper.convertToEntity(p);
         product.setId(id);
         productRepository.update(product);
     }
