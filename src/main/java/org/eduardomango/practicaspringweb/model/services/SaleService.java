@@ -82,11 +82,12 @@ public class SaleService {
         saleRepository.delete(sale);
     }
 
-    public void update(Long id, SaleRequest s) {
+    public SaleResponse update(Long id, SaleRequest s) {
         findById(id);
         SaleEntity sale = saleRequestMapper.convertToEntity(s);
         sale.setId(id);
         saleRepository.save(sale);
+        return saleResponseMapper.convertToDto(sale);
     }
 
 

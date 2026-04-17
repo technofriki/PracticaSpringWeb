@@ -62,9 +62,10 @@ public class UserService {
         return userResponseMapper.convertToDto(user);
     }
 
-    public void save(UserRequest u) {
+    public UserResponse save(UserRequest u) {
         UserEntity user = userRequestMapper.convertToEntity(u);
         userRepository.save(user);
+        return userResponseMapper.convertToDto(user);
     }
 
     public void delete(Long id) {
@@ -76,10 +77,11 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public void update(Long id, UserRequest u) {
+    public UserResponse update(Long id, UserRequest u) {
         findById(id);
         UserEntity user = userRequestMapper.convertToEntity(u);
         user.setId(id);
         userRepository.update(user);
+        return userResponseMapper.convertToDto(user);
     }
 }

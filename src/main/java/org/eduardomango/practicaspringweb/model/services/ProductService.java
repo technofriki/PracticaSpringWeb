@@ -59,10 +59,11 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public void save(ProductRequest p) {
+    public ProductResponse save(ProductRequest p) {
 
         ProductEntity product = productRequestMapper.convertToEntity(p);
         productRepository.save(product);
+        return productResponseMapper.convertToDto(product);
     }
 
     public void delete(Long id) {
@@ -74,10 +75,11 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public void update(Long id, ProductRequest p) {
+    public ProductResponse update(Long id, ProductRequest p) {
         findById(id);
         ProductEntity product = productRequestMapper.convertToEntity(p);
         product.setId(id);
         productRepository.update(product);
+        return productResponseMapper.convertToDto(product);
     }
 }

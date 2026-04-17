@@ -1,5 +1,7 @@
 package org.eduardomango.practicaspringweb.Controllers;
 
+import org.eduardomango.practicaspringweb.DTO.SaleRequest;
+import org.eduardomango.practicaspringweb.DTO.SaleResponse;
 import org.eduardomango.practicaspringweb.model.entities.SaleEntity;
 import org.eduardomango.practicaspringweb.model.exceptions.SaleNotFoundException;
 import org.eduardomango.practicaspringweb.model.services.SaleService;
@@ -12,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sales")
-public class  SaleController {
+public class SaleController {
 
     private final SaleService saleService;
 
@@ -21,32 +23,37 @@ public class  SaleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SaleEntity>> getAllSales(){
-        List<SaleEntity> sales = saleService.findAll();
-    return ResponseEntity.ok(sales);}
+    public ResponseEntity<List<SaleResponse>> getAllSales() {
+        List<SaleResponse> sales = saleService.findAll();
+        return ResponseEntity.ok(sales);
+    }
 
-    @GetMapping ("/{id}")
-    public ResponseEntity<SaleEntity> getSaleById (@PathVariable Long id){
+    @GetMapping("/{id}")
+    public ResponseEntity<SaleResponse> getSaleById(@PathVariable Long id) {
 
-        SaleEntity sale = saleService.findById(id);
+        SaleResponse sale = saleService.findById(id);
         return ResponseEntity.ok(sale);
     }
 
-    @PostMapping
-    public ResponseEntity<SaleEntity> registerSale (@PathVariable Long id_product, @RequestParam Long id_client, @RequestParam Long quantity){
-        SaleEntity sale = saleService.registerSale(id_product, id_client, quantity);
+    @PostMapping("/register/{id_product}")
+    public ResponseEntity<SaleResponse> registerSale(@PathVariable Long id_product, @RequestParam Long id_client, @RequestParam Long quantity) {
+        SaleRequest saleRequest = new SaleRequest();
+        saleRequest.setId_product(id_product);
+        saleRequest.setId_client(id_client);
+        saleRequest.setQuantity(quantity);
+        SaleResponse sale = saleService.registerSale(saleRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(sale);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SaleEntity> updateSale(@PathVariable Long id, @RequestBody SaleEntity sale){
+    public ResponseEntity<SaleResponse> updateSale(@PathVariable Long id, @RequestBody SaleRequest sale) {
 
-        saleService.update(id, sale);
-        return ResponseEntity.ok(sale);
+        SaleResponse updatedSale = saleService.update(id, sale);
+        return ResponseEntity.ok(updatedSale);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSale (@PathVariable Long id){
+    public ResponseEntity<Void> deleteSale(@PathVariable Long id) {
 
         saleService.delete(id);
         return ResponseEntity.noContent().build();
